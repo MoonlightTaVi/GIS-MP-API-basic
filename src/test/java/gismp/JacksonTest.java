@@ -3,6 +3,8 @@ package gismp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import gismp.CrptApi.DocumentProduct;
+import gismp.CrptApi.RequestBody;
 import tools.jackson.databind.ObjectMapper;
 
 /**
@@ -55,6 +57,40 @@ public class JacksonTest {
 				);
 	}
 	
+	
+	/**
+	 * RequestBody (with some document and product)
+	 * is serialized and deserialized properly.
+	 */
+	@Test
+	public void serializedDocumentSuccess() {
+		RequestBody initialBody = new RequestBody();
+		initialBody.productDocument.products.add(new DocumentProduct());
+		
+		// Convert to JSON string
+		String jsonString = objectMapper
+				.writeValueAsString(initialBody);
+		
+		// Convert back
+		RequestBody deserializedBody = objectMapper.readValue(
+				jsonString, RequestBody.class
+				);
+		
+		// Convert to JSON again
+		String newJsonString = objectMapper
+				.writeValueAsString(deserializedBody);
+		
+		// Strings must be equal
+		Assertions.assertEquals(jsonString, newJsonString);
+		// Check that some of the properties are present
+		Assertions.assertTrue(
+				jsonString.contains("\"document_format\":\"MANUAL\"")
+				);
+		// Check that some other properties must be absent
+		Assertions.assertTrue(
+				!jsonString.contains("sample group")
+				);
+	}
 	
 	
 	// SAMPLE OBJECTS
